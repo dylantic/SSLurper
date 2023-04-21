@@ -1,37 +1,40 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
+	"time"
 
+	"github.com/dylantic/SSLurper/handlers"
+	"github.com/dylantic/SSLurper/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/test", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "success",
-		})
-	})
+	r := gin.New()
 
-	r.POST("/query", func(ctx *gin.Context) {
+	r.SetTrustedProxies([]string{"127.0.0.1"})
 
-		input, error := io.ReadAll(ctx.Request.Body)
-		if error != nil {
-			log.Fatalf("impossible to read all body of response: %s", error)
-		}
+	r.Use(middleware.AddReqID())
 
-		var jsondata map[string]interface{}
+	r.Use(gin.LoggerWithFormatter(func(params gin.LogFormatterParams) string {
+		return fmt.Sprintf("%s - %s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+			params.Keys["ReqID"],
+			params.ClientIP,
+			params.TimeStamp.Format(time.RFC1123),
+			params.Method,
+			params.Path,
+			params.Request.Proto,
+			params.StatusCode,
+			params.Latency,
+			params.Request.UserAgent(),
+			params.ErrorMessage,
+		)
+	}))
 
-		json.Unmarshal(input, &jsondata)
-		fmt.Println(jsondata)
+	r.GET("/test", handlers.Test)
 
-		ctx.JSON(http.StatusOK, jsondata)
-	})
+	r.POST("/query", handlers.Query)
 
-	r.Run()
+	r.Run(":8080")
+
 }
