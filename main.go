@@ -5,11 +5,20 @@ import (
 	"time"
 
 	"github.com/dylantic/SSLurper/handlers"
+	"github.com/dylantic/SSLurper/helpers"
 	"github.com/dylantic/SSLurper/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	Config := &helpers.Config
+
+	if !Config.Server.DebugMode {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
+
 	r := gin.New()
 
 	r.SetTrustedProxies([]string{"127.0.0.1"})

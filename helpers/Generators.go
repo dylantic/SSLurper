@@ -11,4 +11,5 @@ func RandomBase64String(l int) string {
 	rand.Read(buff)
 	str := base64.RawURLEncoding.EncodeToString(buff)
 	return str[:l] // strip 1 extra character we get from odd length results
+
 }

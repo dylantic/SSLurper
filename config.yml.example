@@ -1,0 +1,8 @@
+server:
+  debugmode: false
+  socket: ":8080"
+database:
+  type: "sqlite3"
+  path: "database.sqlite3"
+  username: ""
+  password: ""
