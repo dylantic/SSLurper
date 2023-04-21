@@ -1,19 +1,20 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/bytedance/sonic"
 	"github.com/dylantic/SSLurper/models"
 	"github.com/gin-gonic/gin"
 )
 
 func Query(ctx *gin.Context) {
-	//input, error := io.ReadAll(ctx.Request.Body)
 	input := ctx.Request.Body
 
+	gin.EnableJsonDecoderDisallowUnknownFields()
+
 	var jsondata models.QueryRequest
-	requestDecoder := json.NewDecoder(input)
+	requestDecoder := sonic.ConfigFastest.NewDecoder(input)
 	requestDecoder.DisallowUnknownFields()
 
 	if err := requestDecoder.Decode(&jsondata); err != nil {
@@ -25,8 +26,6 @@ func Query(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, resErr)
 		return
 	}
-
-	//var jsondata map[string]interface{}
 
 	ctx.JSON(http.StatusOK, jsondata)
 }
