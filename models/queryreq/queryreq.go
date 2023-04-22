@@ -1,6 +1,6 @@
 package models
 
-type QueryRequest struct {
+type QueryReq struct {
 	Domain       string
 	TlsVersions  []string
 	CipherSuites []string

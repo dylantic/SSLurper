@@ -7,6 +7,7 @@ import (
 	"github.com/dylantic/SSLurper/handlers"
 	"github.com/dylantic/SSLurper/helpers"
 	"github.com/dylantic/SSLurper/middleware"
+	"github.com/dylantic/SSLurper/models/apikey"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,9 +41,13 @@ func main() {
 		)
 	}))
 
-	r.GET("/test", handlers.Test)
+	apiV1 := r.Group("/api/v1")
+	{
+		apiV1.GET("/test", handlers.Test)
+		apiV1.POST("/query", handlers.Query)
+	}
 
-	r.POST("/query", handlers.Query)
+	fmt.Println(apikey.Create("me", "hello"))
 
 	r.Run(":8080")
 
